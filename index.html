@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>CSS test</title>
+
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+            background: aliceblue;
+        }
+        .container{
+            height: 100%;
+            transition: all 350ms ease-in-out;
+        }
+        .center-div{
+            height: 100%;
+            width: 100%;
+            font-size: 32px;
+            background: #eaeaea;
+            position: relative;
+        }
+
+        /* inline-block technique */
+        .one {
+            background: navajowhite
+        }
+        /* .one > p{
+            display: inline-block;
+            vertical-align: middle;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+        }
+        .one p:before{
+            content: '';
+            height: 100%;
+            display: inline-block;
+            vertical-align: middle   
+        } */
+
+        /* flex technique */
+        .two {
+            background: brown;
+        }
+       /* .two > p{
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column
+        } */
+
+        .three {
+            background: thistle;
+        }
+       .center-div > p{
+           position: absolute;
+           left: 50%;
+           top: 50%;
+           transform: translate(-50%, -50%);
+            transition: all 350ms ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="container">
+        <div class="center-div one">
+            <p>
+                1. Hello there, I am in center of the screen!
+            </p>
+        </div>
+
+        <div class="center-div two">
+            <p>
+                2. Hello there, I am in center of the screen!
+            </p>
+        </div>
+
+        <div class="center-div three">
+            <p>
+                3. Hello there, I am in center of the screen!
+            <span>
+                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Suscipit commodi culpa ullam eius et omnis accusantium quod similique incidunt, fuga dolorum aperiam voluptatem eveniet assumenda minima in recusandae dolore? Non.
+            </span>
+            </p>
+        </div>
+    </div>
+</body>
+
+<script>
+var windowSize = window.innerHeight;
+function getAverage(elements, number){
+    var sum = 0;
+    var lastElements = elements.slice(Math.max(elements.length - number, 1));
+
+    for(var i = 0; i < lastElements.length; i++){
+        sum = sum + lastElements[i];
+    }
+
+    return Math.ceil(sum/number);
+}
+var scrollings = [];
+var bodys = document.getElementById('container');
+var parent = document.getElementById("container");
+document.addEventListener("DOMContentLoaded", function(){
+    for(var i=0; i<parent.children.length; i++){
+        parent.children[i].setAttribute("data-id", i);
+    }
+    parent.children[0].classList.add("active");
+
+    document.querySelector('.container').addEventListener("mousewheel", handler);
+});
+
+function handler(e){
+    var value = e.wheelDelta || -e.deltaY || -e.detail;
+    var delta = Math.max(-1, Math.min(1, value));
+    var id = parseInt(e.target.dataset.id);
+    var next = id + 1;
+    var prev = id - 1;
+    if(scrollings.length > 149){
+        scrollings.shift();
+    }
+    scrollings.push(Math.abs(value));
+
+    var averageEnd = getAverage(scrollings, 10);
+    var averageMiddle = getAverage(scrollings, 70);
+    var isAccelerating = averageEnd >= averageMiddle;
+
+    if(isAccelerating){
+        if (delta < 0) {
+            if(id < parent.children.length - 1){
+                parent.children[next-1].classList.remove("active");
+                parent.children[next].classList.add("active");
+                bodys.style.transform = `translateY(-${next * windowSize}px)`;
+            }
+        }else {
+            parent.children[prev+1].classList.remove("active");
+            parent.children[prev].classList.add("active");
+            bodys.style.transform = `translateY(-${prev * windowSize}px)`;
+        }
+    }
+    return false;
+}
+
+</script>
+</html>
